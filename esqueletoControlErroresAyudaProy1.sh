@@ -1,6 +1,6 @@
 #!/bin/bash
 shopt -s dotglob #recuperar ocultos
-
+suma=0
 ###################Mostrar error y forzar salida################
 function mostrarError() {
     echo "ERROR. Modo de empleo: midu [opciones] [camino1 camino2 camino3 ...]"
@@ -8,7 +8,46 @@ function mostrarError() {
 }
 #######################Funcion recursiva#######################
 function computingSize() {
-    # Por hacer... se permitirá computar los tamanyos con el comando wc -c (tamaño en bytes), para mayor facilidad...
+    if [[ ! "$4" == *"$OPTION_EXCL"* ]]
+    then 
+        if [ -d "$4" ]
+        then
+            local camino
+            for camino in $4/*
+            do
+                if [[ ! "$camino" == *"$OPTION_EXCL"* ]]
+                then
+                    if [ -d $camino ]
+                    then	
+                        local temp=$suma
+                        suma=0
+                        computingSize $1 $2 $3 $camino $(expr $5 + 1)
+                        if [ $OPTION_S -eq -99999 ]
+                        then
+                            if [ "$OPTION_D" -eq -99999 ]
+                            then
+                                echo $suma $camino
+                                elif [ $5 -le "$OPTION_D" ]
+                                then
+                                    echo $suma $camino
+                            fi
+                        fi
+                        suma=$(expr $suma + $temp)
+                    elif [ -f "$camino" ]
+                    then
+                        local variable=$(wc -c $camino | cut -d ' ' -f1 | tr -s ' ')
+                        suma=$(expr $suma + $variable)
+                    fi
+                fi
+            done
+    elif [ -f "$4" ]
+    then
+        suma=$(wc -c < "$4")
+    fi
+    else
+    echo "$4"
+    fi
+   
 }
 ##################Comprobacion de errores#####################
 OPTION=""
@@ -55,11 +94,14 @@ for i in $@; do
 done
 #####################################################################
 if [ ! $CAMINOS ]; then # Tratar cuando no se especifica un camino (".")
-    computingSize $OPTION_D $OPTION_S $OPTION_EXCL "."
+    computingSize $OPTION_D $OPTION_S $OPTION_EXCL "." 1
     # acciones con el tamanyo..
 else
     for i in "${CAMINOS[@]}"; do
-        computingSize $OPTION_D $OPTION_S $OPTION_EXCL $i
+        computingSize $OPTION_D $OPTION_S $OPTION_EXCL $i 1
         # acciones con el tamanyo..
+        echo "Suma total $suma en $i" ###PROF imprimes el tamaño total...
+        suma=0 
     done
 fi
+exit 0
