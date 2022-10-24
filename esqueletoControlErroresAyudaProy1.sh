@@ -27,9 +27,9 @@ function computingSize() {
                             if [ "$OPTION_D" -eq -99999 ]
                             then
                                 echo $suma $camino
-                                elif [ $5 -le "$OPTION_D" ]
-                                then
-                                    echo $suma $camino
+                            elif [ $5 -le "$OPTION_D" ]
+                            then
+                                echo $suma $camino
                             fi
                         fi
                         suma=$(expr $suma + $temp)
