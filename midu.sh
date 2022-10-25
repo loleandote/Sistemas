@@ -8,28 +8,23 @@ function mostrarError() {
 }
 #######################Funcion recursiva#######################
 function computingSize() {
-    if [ ! "$4" == *"$OPTION_EXCL"* ]|| [ ! "$4" == -99999 ]
-    then 
-        if [ -d "$4" ]
+        if [ -d "$5" ]
         then
             local camino
-            for camino in $4/*
+            for camino in $5/*
             do
-                if [[ ! "$camino" == *"$OPTION_EXCL"* ]]
+                if [ "$4" -eq 0 ] || [[ ! "$camino" == *"$3"* ]] #Comprueba que el parametro --exclude no se ha introducido y en caso de ser asi lo compara con la ruta del directorio
                 then
                     if [ -d $camino ]
                     then	
                         local temp=$suma
                         suma=0
-                        computingSize $1 $2 $3 $camino $(expr $5 + 1)
-                        if [ $OPTION_S -eq -99999 ]
+                        computingSize $1 $2 $3 $excluido $camino $(expr $6 + 1) #Se le pasa el valor de las opciones
+                        if [ $2 -eq -99999 ] #Comprueba que la variable "OPTION_S" no se modificado y si es asi muestra el tamaño de los directorios 
                         then
-                            if [ "$OPTION_D" -eq -99999 ]
-                            then
-                                echo $suma $camino
-                            elif [ $5 -le "$OPTION_D" ]
-                            then
-                                echo $suma $camino
+                            if [ $1 -le 0 ] || [ $6 -le "$1" ] #Comprueba si se ha introducido una profundidad, 
+                            then                                #en caso de ser asi,
+                                echo $suma $camino              #comprueba que el la profuncidad del directorio sea menor que el valor de la variable "OPTION_D" en caso contrario no muestra el tamaño del directorio
                             fi
                         fi
                         suma=$(expr $suma + $temp)
@@ -42,17 +37,17 @@ function computingSize() {
             done
     elif [ -f "$4" ]
     then
-        suma=$(wc -c < "$4")
+        if [ "$4" -eq 0 ] || [[ ! "$5" == *"$3"* ]] #Comprueba que el parametro --exclude no se ha introducido y en caso de ser asi lo compara con la ruta del archivo
+        then
+            suma=$(wc -c < "$5")
+        fi
     fi
-    else
-    echo "$4"
-    fi
-   
 }
 ##################Comprobacion de errores#####################
 OPTION=""
 CONTADOR=1 #Se empieza en el arg 1
-OPTION_D=-99999; OPTION_S=-99999; OPTION_EXCL=-99999 #Para que las variables con las opciones -d -s y --exclude se pasen siempre como param de la funcion
+OPTION_D=-99999; OPTION_S=-99999; OPTION_EXCL=-99999  #Para que las variables con las opciones -d -s y --exclude se pasen siempre como param de la funcion
+excluido=0 #Comprueba que el usuario ha introducido un valor puesto que podría haber introducido el valor por defecto
 for i in $@; do
     case $i in
     "-s" | "-d" | "--exclude")
@@ -82,6 +77,7 @@ for i in $@; do
             ;;
         "--exclude") #Param de --exclude
             OPTION_EXCL=$i 
+            excluido=1
             ;;
         "")
             CAMINOS+=("$i") #$i representa un camino/ruta la anyadimos al array/vector
@@ -94,11 +90,11 @@ for i in $@; do
 done
 #####################################################################
 if [ ! $CAMINOS ]; then # Tratar cuando no se especifica un camino (".")
-    computingSize $OPTION_D $OPTION_S $OPTION_EXCL "." 1
+    computingSize $OPTION_D $OPTION_S $OPTION_EXCL $excluido "." 1
     # acciones con el tamanyo..
 else
     for i in "${CAMINOS[@]}"; do
-        computingSize $OPTION_D $OPTION_S $OPTION_EXCL $i 1
+        computingSize $OPTION_D $OPTION_S $OPTION_EXCL $excluido $i 1 
         # acciones con el tamanyo..
         echo "Suma total $suma en $i" ###PROF imprimes el tamaño total...
         suma=0 
