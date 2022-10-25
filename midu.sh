@@ -8,7 +8,7 @@ function mostrarError() {
 }
 #######################Funcion recursiva#######################
 function computingSize() {
-    if [[ ! "$4" == *"$OPTION_EXCL"* ]]
+    if [ ! "$4" == *"$OPTION_EXCL"* ]|| [ ! "$4" == -99999 ]
     then 
         if [ -d "$4" ]
         then
