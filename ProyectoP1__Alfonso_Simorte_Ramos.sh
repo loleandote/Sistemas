@@ -30,12 +30,16 @@ function computingSize() {
                         suma=$(expr $suma + $temp)
                     elif [ -f "$camino" ]
                     then
+                        #Ejecuta el comando wc -c el cual devuelve el tamaño en bytes del archivo en formato "tamaño del archivo" "nombre del archivo"
+                        #Para obtener el dato del tamaño se corta el resultado en el primer espacio y se substitullen los espacios que puedan contener por caracter vacio
+                        #dejando así el numero aislado
                         local variable=$(wc -c $camino | cut -d ' ' -f1 | tr -s ' ')
                         suma=$(expr $suma + $variable)
                     fi
                 fi
             done
-    elif [ -f "$4" ]
+    #por si la ruta introducida como parametro al script coincide con un archivo
+    elif [ -f "$5" ]
     then
         if [ "$4" -eq 0 ] || [[ ! "$5" == *"$3"* ]] #Comprueba que el parametro --exclude no se ha introducido y en caso de ser asi lo compara con la ruta del archivo
         then
