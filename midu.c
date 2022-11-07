@@ -14,7 +14,8 @@ int esDirectorio(char *direccion){
     directorio=opendir(direccion);
     if (directorio!=NULL){
         closedir(directorio);
-        return 1;}
+        return 1;
+    }
         return 0;
 }
 
