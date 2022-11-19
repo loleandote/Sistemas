@@ -4,10 +4,20 @@
 #include <string.h>
 #include <sys/stat.h>
 
+/**
+ * Imprime un mensaje de error
+ */
 void mostarError(){
     printf("ERROR. Modo de empleo: midu [opciones] [camino1 camino2 camino3 ...]\n");
 }
 
+/**
+ * Devuelve el tamaño de un archivo.
+ * 
+ * @param direcion la ruta al archivo
+ * 
+ * @return El tamaño del archivo.
+ */
 int calcularTamano(char *direcion){
     struct stat sb;
     if(stat(direcion, &sb)==-1){
@@ -17,6 +27,19 @@ int calcularTamano(char *direcion){
     return sb.st_size;
 }
 
+/**
+ * Atraviesa recursivamente un árbol de directorios e imprime el tamaño de cada directorio
+ * 
+ * @param limite la profundidad máxima del árbol de directorios
+ * @param actual la profundidad actual de la recursividad
+ * @param solofin si es 1, solo imprimirá el resultado final, si es 0, imprimirá el resultado de cada
+ * directorio.
+ * @param exclude el nombre del archivo a excluir
+ * @param excluido 0 si el parámetro de exclusión está vacío, 1 de lo contrario
+ * @param direccion el directorio a escanear
+ * 
+ * @return el tamaño del archivo.
+ */
 int VerContenido(int limite,int actual, int solofin, char *exclude, int excluido, char direccion[]){
     struct dirent *entry;
     DIR *directorio;
@@ -27,18 +50,24 @@ int VerContenido(int limite,int actual, int solofin, char *exclude, int excluido
     else{
         while( (entry=readdir(directorio)))
         {
-                char *nombre= entry->d_name;
-                int longitud=strlen(direccion)+strlen(nombre)+1;
-                char pref[longitud];
-                strcpy(pref, "");
-                strcat(pref,direccion);
-                strcat(pref,"/");
-                strcat(pref,nombre);
-                int resultado1= strcmp(nombre, ".");
-                int resultado2= strcmp(nombre, "..");
+            //Obtiene el nombre del archivo o directorio
+            char *nombre= entry->d_name;
+            int longitud=strlen(direccion)+strlen(nombre)+1;
+            char pref[longitud];
+            strcpy(pref, "");
+            strcat(pref,direccion);
+            strcat(pref,"/");
+            strcat(pref,nombre);
+            //Si la dirreccion termina en "."
+            int resultado1= strcmp(nombre, ".");
+            //Si la dirreccion termina en ".."
+            int resultado2= strcmp(nombre, "..");
+           /*  Obtiene el tamaño del archivo o direcotrio si no cumple las dos condiciones anteriores o el nombre
+            del directorio o archivo */
             if (resultado1 !=0 && resultado2 !=0 &&(strcmp(exclude, "")==0||(strstr(nombre,exclude)==NULL))){
                 int tamano =VerContenido(limite, (actual+1), solofin, exclude, excluido,pref);
                 suma=suma+tamano;
+                //Si es un directorio se muestra el tamaño
                 if (opendir(pref)!=NULL)
                 printf("%10d %s\n", tamano,pref);
             }    
@@ -48,6 +77,15 @@ int VerContenido(int limite,int actual, int solofin, char *exclude, int excluido
     return suma;
 }
 
+/**
+ * Atraviesa recursivamente un árbol de directorios e imprime el tamaño total de todos los archivos en
+ * el árbol
+ * 
+ * @param argc número de argumentos
+ * @param argv 
+ * 
+ * @return La suma del tamaño de todos los archivos en el directorio.
+ */
 int main (int argc,char *argv[]){
     int solofin=0, limite=0,excluido=0;
     char *exclude;
