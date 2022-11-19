@@ -27,6 +27,17 @@ int calcularTamano(char *direcion){
     return sb.st_size;
 }
 
+int verificarArchivo(char *direcion){
+    FILE* archivo=fopen(direcion,"r");
+    if (archivo==NULL)
+    return 0;
+    else
+    {
+        fclose(archivo);
+        return 1;
+    }
+}
+
 /**
  * Atraviesa recursivamente un árbol de directorios e imprime el tamaño de cada directorio
  * 
@@ -45,7 +56,7 @@ int VerContenido(int limite,int actual, int solofin, char *exclude, int excluido
     DIR *directorio;
     directorio=opendir(direccion);
     int suma=0;
-    if(directorio == NULL)
+    if(directorio == NULL&&verificarArchivo(direccion))
     suma =calcularTamano(direccion);
     else{
         while( (entry=readdir(directorio)))
