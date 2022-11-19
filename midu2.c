@@ -8,16 +8,6 @@ void mostarError(){
     printf("ERROR. Modo de empleo: midu [opciones] [camino1 camino2 camino3 ...]\n");
 }
 
-int esDirectorio(char *direccion){
-    DIR * directorio;
-    directorio=NULL;
-    directorio=opendir(direccion);
-    if (directorio!=NULL){
-        closedir(directorio);
-        return 1;}
-        return 0;
-}
-
 int calcularTamano(char *direcion){
     struct stat sb;
     if(stat(direcion, &sb)==-1){
@@ -27,42 +17,34 @@ int calcularTamano(char *direcion){
     return sb.st_size;
 }
 
-int VerContenido(int limite,int actual, int solofin, char *exclude, int excluido, char carpeta[]){
+int VerContenido(int limite,int actual, int solofin, char *exclude, int excluido, char direccion[]){
     struct dirent *entry;
-    DIR *carpeto;
-    carpeto=opendir(carpeta);
-    int salir =0;
-    if(carpeto == NULL)
-        salir=2;
+    DIR *directorio;
+    directorio=opendir(direccion);
     int suma=0;
-    while( (entry=readdir(carpeto))||(salir ==0) )
-    {
-        char *nombre= entry->d_name;
-        int longitud=strlen(carpeta)+strlen(nombre)+1;
-        char pref[longitud];
-        strcpy(pref, "");
-        strcat(pref,carpeta);
-        strcat(pref,"/");
-        strcat(pref,nombre);
-         int resultado1= strcmp(nombre, ".");
-        int resultado2= strcmp(nombre, "..");
-        if (resultado2 ==0)
-        salir=1;
-        if (resultado1 !=0 && resultado2 !=0 &&(strcmp(exclude, "")==0||(strstr(nombre,exclude)==NULL)))
-        if (esDirectorio(pref)==1){
-            int tamano =VerContenido(limite, (actual+1), solofin, exclude, excluido,pref);
-            suma=suma+tamano;
-            if ((solofin==0)&&((limite ==0)||(actual<=limite)))
-            printf("%10d %s\n", tamano,pref);
+    if(directorio == NULL)
+    suma =calcularTamano(direccion);
+    else{
+        while( (entry=readdir(directorio)))
+        {
+                char *nombre= entry->d_name;
+                int longitud=strlen(direccion)+strlen(nombre)+1;
+                char pref[longitud];
+                strcpy(pref, "");
+                strcat(pref,direccion);
+                strcat(pref,"/");
+                strcat(pref,nombre);
+                int resultado1= strcmp(nombre, ".");
+                int resultado2= strcmp(nombre, "..");
+            if (resultado1 !=0 && resultado2 !=0 &&(strcmp(exclude, "")==0||(strstr(nombre,exclude)==NULL))){
+                int tamano =VerContenido(limite, (actual+1), solofin, exclude, excluido,pref);
+                suma=suma+tamano;
+                if (opendir(pref)!=NULL)
+                printf("%10d %s\n", tamano,pref);
+            }    
         }
-            else{
-                int tamano=calcularTamano(pref);
-                suma= suma + tamano;
-            }      
+        closedir(directorio);
     }
-    if(salir==2)
-        suma =calcularTamano(carpeta);
-    closedir(carpeto);
     return suma;
 }
 
