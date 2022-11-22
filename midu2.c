@@ -30,13 +30,7 @@ int calcularTamano(char *direcion){
 }
 
 int verificarArchivo(char *direcion){
-    int archivo = open(direcion,O_RDONLY)
-    if (archivo!= -1)
-    {
-        fclose(archivo);
-        return 1;
-    }
-    return 0;
+    return open(direcion,O_RDONLY);
 }
 
 /**
@@ -57,8 +51,10 @@ int VerContenido(int limite,int actual, int solofin, char *exclude, int excluido
     DIR *directorio;
     directorio=opendir(direccion); 
     int suma=0;
-    if(directorio == NULL&&verificarArchivo(direccion))
-    suma =calcularTamano(direccion);
+    int algo = open(direccion,O_DIRECTORY);
+    int fichero=open(direcion,O_RDONLY);
+    if(directorio == NULL&&fichero!=-1)
+    suma =read(fichero);
     else{
         while( (entry=readdir(directorio)))
         {
