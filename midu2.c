@@ -2,7 +2,9 @@
 #include <stdlib.h>
 #include <dirent.h>
 #include <string.h>
-#include <sys/stat.h>
+#include<sys/types.h>
+#include<sys/stat.h>
+#include <fcntl.h>  
 
 /**
  * Imprime un mensaje de error
@@ -28,14 +30,13 @@ int calcularTamano(char *direcion){
 }
 
 int verificarArchivo(char *direcion){
-    FILE* archivo=fopen(direcion,"r");
-    if (archivo==NULL)
-    return 0;
-    else
+    int archivo = open(direcion,O_RDONLY)
+    if (archivo!= -1)
     {
         fclose(archivo);
         return 1;
     }
+    return 0;
 }
 
 /**
@@ -54,7 +55,7 @@ int verificarArchivo(char *direcion){
 int VerContenido(int limite,int actual, int solofin, char *exclude, int excluido, char direccion[]){
     struct dirent *entry;
     DIR *directorio;
-    directorio=opendir(direccion);
+    directorio=opendir(direccion); 
     int suma=0;
     if(directorio == NULL&&verificarArchivo(direccion))
     suma =calcularTamano(direccion);

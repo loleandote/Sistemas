@@ -1,4 +1,7 @@
 {
     "docwriter.language": "Spanish",
-    "docwriter.progress.trackClasses": false
+    "docwriter.progress.trackClasses": false,
+    "files.associations": {
+        "fcntl.h": "c"
+    }
 }
