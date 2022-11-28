@@ -38,6 +38,7 @@ int calcularTamano(char *direcion){
 int verificarArchivo(char *direcion){
     return open(direcion,O_RDONLY);
 }
+//nada
 
 /**
  * Atraviesa recursivamente un árbol de directorios e imprime el tamaño de cada directorio
