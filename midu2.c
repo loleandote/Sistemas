@@ -14,10 +14,10 @@ void mostarError(){
     printf("ERROR. Modo de empleo: midu [opciones] [camino1 camino2 camino3 ...]\n");
 }
 
-bool esNumero(char* cadena){
+/*bool esNumero(char* cadena){
     for(int i=0; (char t=cadena[i])!="\0"; i++))
-    printf("%c",t);
-}
+    printf("%c",);
+}*/
 
 /**
  * Devuelve el tamaño de un archivo.
@@ -40,6 +40,16 @@ int verificarArchivo(char *direcion){
 }
 //nada
 
+int esDirectorio(char *direccion){
+    struct stat sb;
+    if(stat(direccion, &sb)==-1)
+        return -1;
+    else if(S_ISDIR(sb.st_mode))
+    return 1;
+    else
+    return 0;
+}
+
 /**
  * Atraviesa recursivamente un árbol de directorios e imprime el tamaño de cada directorio
  * 
@@ -59,7 +69,7 @@ int VerContenido(int limite,int actual, int solofin, char *exclude, int excluido
     directorio=opendir(direccion); 
     int suma=0;
     int algo = open(direccion,O_DIRECTORY);
-    int fichero=open(direcion,O_RDONLY);
+    int fichero=open(direccion,O_RDONLY);
     if(directorio == NULL&&fichero!=-1)
     suma =read(fichero);
     else{
@@ -145,6 +155,8 @@ int main (int argc,char *argv[]){
     i=0;
     while(i< cami){
     char *direccion= caminos[i++];
+
+    printf("%d\n",esDirectorio(direccion));
     printf("Suma total %d en %s\n", VerContenido(limite, 1, solofin, exclude, excluido, direccion),direccion);
     }
     return 0;
