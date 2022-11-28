@@ -5,12 +5,18 @@
 #include<sys/types.h>
 #include<sys/stat.h>
 #include <fcntl.h>  
+#include <stdbool.h>
 
 /**
  * Imprime un mensaje de error
  */
 void mostarError(){
     printf("ERROR. Modo de empleo: midu [opciones] [camino1 camino2 camino3 ...]\n");
+}
+
+bool esNumero(char* cadena){
+    for(int i=0; (char t=cadena[i])!="\0"; i++))
+    printf("%c",t);
 }
 
 /**
