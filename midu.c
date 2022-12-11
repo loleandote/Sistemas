@@ -7,7 +7,7 @@
 void mostarError()
 {
     printf("ERROR. Modo de empleo: midu [opciones] [camino1 camino2 camino3 ...]\n");
-    return 1;
+    //return 1;
 }
 
 int esDirectorio(char *direccion)
