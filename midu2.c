@@ -85,7 +85,6 @@ int main (int argc,char *argv[]){
     while (i < argc)
     {
         char *param = argv[i++];
-        char letra ='f';
         if (strcmp(param, "-s") == 0)
             if (cami == 0) 
                 solofin = 1 ;
