@@ -11,7 +11,6 @@ pid_t hijos[];
 int numHijos;
 
 void Manejador(int num){
-    printf("HOLA\n");
     int j=0;
      for(;j<numHijos;j++)
             if(hijos[j]>0){
@@ -29,6 +28,7 @@ int main(int argc, char *argv[]){
         fprintf(stderr,"Error en la manipulación de la señal\n");
         exit(EXIT_FAILURE);
     }
+    // No hay caminos
     if(argc<2){
         printf("ERROR. Modo de empleo: ./padre [camino1 camino2 camino3 ...]\n");
         return EXIT_FAILURE;
